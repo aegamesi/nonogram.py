@@ -80,7 +80,14 @@ def do_row(nums, size, existing=None):
 
     return common
 
+def is_row_filled(row):
+    for x in row:
+        if x == SYMBOL_EMPTY:
+            return False
+    return True
 
+
+# Grid abstraction handlers
 def grid_make(w, h):
     return [[SYMBOL_EMPTY for i in range(0, w)] for j in range(0, h)]
 def grid_get_row(grid, row):
@@ -101,9 +108,8 @@ def grid_print(grid):
         print(s)
 def grid_filled(grid):
     for row in grid:
-        for x in row:
-            if x == SYMBOL_EMPTY:
-                return False
+        if not is_row_filled(row):
+            return False
     return True
 def grid_image(grid, size=10):
     w, h = len(grid[0]), len(grid)
@@ -121,6 +127,7 @@ def grid_image(grid, size=10):
             if val == SYMBOL_X:
                 draw.rectangle(coord, fill=(255, 128, 128))
     return im
+# end grid abstraction handlers
 
 def go(cols, rows):
     w = len(cols)
@@ -136,12 +143,20 @@ def go(cols, rows):
     snapshot()
     while not grid_filled(g):
         for i in range(0, h):
-            d = do_row(test_rows[i], h, grid_get_row(g, i))
+            row = grid_get_row(g, i)
+            if is_row_filled(row):
+                continue
+
+            d = do_row(test_rows[i], h, row)
             grid_set_row(g, i, d)
             snapshot()
 
         for i in range(0, w):
-            d = do_row(test_cols[i], w, grid_get_col(g, i))
+            col = grid_get_col(g, i)
+            if is_row_filled(col):
+                continue
+
+            d = do_row(test_cols[i], w, col)
             grid_set_col(g, i, d)
             snapshot()
     snapshot()
@@ -158,6 +173,6 @@ test_cols = [(2,4,1,3,3,4),(2,1,1,1,1,3,4),(3,3,7,5,3),(3,1,5,4,1),(6,6,4,1),(1,
 go(test_cols, test_rows)
 
 # remove duplicates with
-fdupes -rdN .
+# fdupes -rdN .
 # turn it into a gif with
 # convert -delay 10 -loop 0 nonogram*.png anim.gif
