@@ -67,6 +67,5 @@ target/
 
 
 # screenshots
-*.gif
 *.png
 out/
